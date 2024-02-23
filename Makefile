@@ -13,9 +13,10 @@ else
 OUTPUT = $(NAME)
 endif
 ifeq ($(shell echo "$(GOARCH)" | grep -Pq "(mips|mipsle)" && echo true),true) # 
-ADDITION = GOMIPS=softfloat go build -o $(NAME)_softfloat -trimpath -ldflags "$(LDFLAGS)" -v $(MAIN) && \
-	upx -9 $(NAME) && \
-	upx -9 $(NAME)_softfloat
+	ADDITION = GOMIPS=softfloat go build -o $(NAME)_softfloat -trimpath -ldflags "$(LDFLAGS)" -v $(MAIN)
+	ifneq (,$(filter $(GOARCH),'mips' 'mipsle'))
+		ADDITION += && upx -9 $(NAME) && upx -9 $(NAME)_softfloat
+	endif
 endif
 .PHONY: clean
 
